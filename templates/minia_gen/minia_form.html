@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Générer une Miniature</h2>
+  <form method="post" id="miniatureForm">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Envoyer</button>
+  </form>
+
+    {% if image_url %}
+    <div>
+      <img src="{{ image_url }}" alt="Miniature générée">
+    </div>
+  {% endif %}
+
+  <script>
+    const bossField = document.getElementById("id_boss");
+    const aileField = document.getElementById("id_aile");
+
+    // Mise à jour des choix de boss pour correspondre aux nouvelles valeurs
+    const bossChoices = {
+      'w1': [['vg', 'vg'], ['gors', 'gors'], ['sab', 'sab']],
+      'w2': [['sloth', 'sloth'], ['trio', 'trio'], ['matt', 'matt']],
+      'w3': [['esc', 'esc'], ['kc', 'kc'], ['xera', 'xera']],
+      'w4': [['cairn', 'cairn'], ['mo', 'mo'], ['sam', 'sam'], ['dei', 'dei']],
+      'w5': [['sh', 'sh'], ['river', 'river'], ['statues', 'statues'], ['dhuum', 'Dhuum']],
+      'w6': [['ca', 'ca'], ['twins', 'twins'], ['qadim', 'qadim']],
+      'w7': [['adina', 'adina'], ['sabir', 'sabir'], ['qpeer', 'qpeer']],
+    };
+
+    aileField.addEventListener('change', function() {
+      const selectedAile = this.value;
+      const bosses = bossChoices[selectedAile] || [];
+
+      bossField.innerHTML = ''; // Vider les options existantes
+      bosses.forEach(function(boss) {
+        const option = new Option(boss[1], boss[0]);
+        bossField.options.add(option);
+      });
+
+      // Mettre à jour le champ boss avec le premier choix par défaut si disponible
+      if(bosses.length > 0) {
+        bossField.value = bosses[0][0];
+      }
+    });
+
+    // Déclencher manuellement le changement au chargement de la page pour initialiser les boss
+    aileField.dispatchEvent(new Event('change'));
+  </script>
+{% endblock %}
